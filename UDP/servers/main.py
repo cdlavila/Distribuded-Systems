@@ -35,7 +35,7 @@ else:
         operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5002))
         result , address = operation_server.recvfrom(1024)
         print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
-        main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+        main_server.sendto(result,(addr[0],addr[1]))
         main_server.close()
     else:
         if operation.decode("UTF-8") == 'multiplication':
@@ -45,7 +45,7 @@ else:
             operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5003))
             result , address = operation_server.recvfrom(1024)
             print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
-            main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+            main_server.sendto(result,(addr[0],addr[1]))
             main_server.close()
         else:
             if operation.decode("UTF-8") == 'division':
@@ -55,7 +55,7 @@ else:
                 operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5004))
                 result , address = operation_server.recvfrom(1024)
                 print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
-                main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+                main_server.sendto(result,(addr[0],addr[1]))
                 main_server.close()
             else:
                 if operation.decode("UTF-8") == 'power':
@@ -65,7 +65,7 @@ else:
                     operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5005))
                     result , address = operation_server.recvfrom(1024)
                     print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
-                    main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+                    main_server.sendto(result,(addr[0],addr[1]))
                     main_server.close()
                 else: 
                     if operation.decode("UTF-8") == 'logarithm':
@@ -75,6 +75,6 @@ else:
                         operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5006))
                         result , address = operation_server.recvfrom(1024)
                         print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
-                        main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+                        main_server.sendto(result,(addr[0],addr[1]))
                         main_server.close()
 
