@@ -1,11 +1,10 @@
 import socket
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 3000
+UDP_IP = '127.0.0.1'
+UDP_PORT = 3000
 BUFFER_SIZE = 1024
 
-client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-client.connect((TCP_IP, TCP_PORT))
+client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 operations = ['sum', 'subtraction', 'multiplication', 'division', 'power', 'logarithm']
 print('\nAVAILABLE OPERATIONS:')
@@ -22,12 +21,11 @@ a = input()
 print('Enter the operator b: ')
 b = input()
 
-client.send(operation.encode('UTF-8'))
-client.recv(BUFFER_SIZE).decode('UTF-8')
-client.send(a.encode('UTF-8'))
-client.recv(BUFFER_SIZE).decode('UTF-8')
-client.send(b.encode('UTF-8'))
-result = client.recv(BUFFER_SIZE).decode('UTF-8')  # We just need this data
+client.sendto(operation.encode('UTF-8'), (UDP_IP, UDP_PORT))
+client.recvfrom(BUFFER_SIZE)
+client.sendto(a.encode('UTF-8'), (UDP_IP, UDP_PORT))
+client.recvfrom(BUFFER_SIZE)
+client.sendto(b.encode('UTF-8'), (UDP_IP, UDP_PORT))
+result, address = client.recvfrom(BUFFER_SIZE)  # We just need this data
+print('The result is:', result.decode("UTF-8"))
 client.close()
-
-print('The result is:', result)

@@ -1,32 +1,27 @@
 import socket
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 5003  # (1024, 65535]
+UDP_IP = '127.0.0.1'
+UDP_PORT = 5003  # (1024, 65535]
 BUFFER_SIZE = 1024
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind((TCP_IP, TCP_PORT))
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.listen(5)
-print(f'Multiplication server listening on {TCP_IP}:{TCP_PORT}')
+multiplication_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+multiplication_server.bind((UDP_IP, UDP_PORT))
+print(f'Multiplication server listening on {UDP_IP}:{UDP_PORT}')
+a, address = multiplication_server.recvfrom(BUFFER_SIZE)
+if not a:
+    raise Exception('Error with the operator a')
+print("Address: ", address[0])
+print("Port: ", address[1])
+print("\nOperator received (a): ", a.decode("UTF-8"))
+multiplication_server.sendto("Received".encode("UTF-8"), (address[0], address[1]))
 
-while 1:
-    conn, address = s.accept()
-    a = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not a:
-        break
-    print("Address: ", address[0])
-    print("Port: ", address[1])
-    print("\nOperator received (a): ", a)
-    conn.send("Received".encode("UTF-8"))
+b, address = multiplication_server.recvfrom(BUFFER_SIZE)
+if not b:
+    raise Exception('Error with the operator b')
+print("Operator received (b): ", b.decode("UTF-8"))
 
-    b = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not b:
-        break
-    print("Operator received (b): ", b)
+multiplication = int(a) * int(b)
+print("Result sent: ", multiplication)
+multiplication_server.sendto(str(multiplication).encode("UTF-8"), (address[0], address[1]))
 
-    multiplication = int(a) * int(b)
-    print("Result sent: ", multiplication)
-    conn.send(str(multiplication).encode("UTF-8"))
-
-    conn.close()
+multiplication_server.close()
