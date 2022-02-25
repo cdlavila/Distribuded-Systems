@@ -1,32 +1,20 @@
 import socket
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 5001  # (1024, 65535]
+UDP_IP = '127.0.0.1'
+UDP_PORT = 5001  # (1024, 65535]
 BUFFER_SIZE = 1024
 
-sum_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sum_server.bind((TCP_IP, TCP_PORT))
-sum_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-sum_server.listen(5)
-print(f'Sum server listening on {TCP_IP}:{TCP_PORT}')
-
-while 1:
-    conn, address = sum_server.accept()
-    a = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not a:
-        break
-    print("Address: ", address[0])
-    print("Port: ", address[1])
-    print("\nOperator received (a): ", a)
-    conn.send("Received".encode("UTF-8"))
-
-    b = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not b:
-        break
-    print("Operator received (b): ", b)
-
-    sum = int(a) + int(b)
-    print("Result sent: ", sum)
-    conn.send(str(sum).encode("UTF-8"))
-
-    conn.close()
+sum_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sum_server.bind((UDP_IP,UDP_PORT))
+print(f'Sum server listening on {UDP_IP}:{UDP_PORT}')
+data, addr = sum_server.recvfrom(1024)
+print ("Dato 1:", data.decode("UTF-8"), "recibido de:", addr)
+sum_server.sendto("recibido".encode("UTF-8"),(addr[0],addr[1]))
+data2, addr = sum_server.recvfrom(1024)
+print ("Dato 2:", data2.decode("UTF-8"), "recibido de:", addr)
+a = int(data.decode("UTF-8"))
+b = int(data2.decode("UTF-8"))
+suma = a + b
+sum_server.sendto(str(suma).encode("UTF-8"),(addr[0],addr[1]))
+print ("Resultado enviado: ", suma)
+sum_server.close()

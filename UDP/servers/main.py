@@ -1,46 +1,80 @@
 import socket
 
-TCP_IP = '127.0.0.1'
-TCP_PORT = 3000  # (1024, 65535]
+UDP_IP = '127.0.0.1'
+UDP_PORT = 3000  # (1024, 65535]
 BUFFER_SIZE = 1024
-SERVERS = {'sum': ('127.0.0.1', 5001), 'subtraction': ('127.0.0.1', 5002), 'multiplication': ('127.0.0.1', 5003),
-           'division': ('127.0.0.1', 5004), 'power': ('127.0.0.1', 5005), 'logarithm': ('127.0.0.1', 5006)}
 
-main_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-main_server.bind((TCP_IP, TCP_PORT))
-main_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-main_server.listen(5)
-print(f'Main server listening on {TCP_IP}:{TCP_PORT}')
+main_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+main_server.bind((UDP_IP,UDP_PORT))
+print(f'Main server listening on {UDP_IP}:{UDP_PORT}')
+operation, address = main_server.recvfrom(BUFFER_SIZE)
+print ("Operation:", operation.decode("UTF-8"), "reciv: ", address)
+main_server.sendto("Received".encode("UTF-8"),(address[0],address[1]))
+data, addr = main_server.recvfrom(1024)
+print ("Dato 1:", data.decode("UTF-8"), "recibido de:", addr)
+main_server.sendto("recibido".encode("UTF-8"),(addr[0],addr[1]))
+data2, addr = main_server.recvfrom(1024)
+print ("Dato 2:", data2.decode("UTF-8"), "recibido de:", addr)
+a = data.decode("UTF-8")
+b = data2.decode("UTF-8")
 
-while 1:
-    conn, address = main_server.accept()
-    operation = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not operation:
-        break
-    print("Address: ", address[0])
-    print("Port: ", address[1])
-    print("\nOperation received: ", operation)
-    conn.send("Received".encode("UTF-8"))
+if operation.decode("UTF-8") == 'sum':
+    operation_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    operation_server.sendto(a.encode('UTF-8'), (UDP_IP, 5001))
+    operation_server.recvfrom(BUFFER_SIZE)
+    operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5001))
+    result , address = operation_server.recvfrom(1024)
+    print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
+    main_server.sendto(result,(addr[0],addr[1]))
+    main_server.close()
+else:
+    if operation.decode("UTF-8") == 'subtraction':
+        operation_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        operation_server.sendto(a.encode('UTF-8'), (UDP_IP, 5002))
+        operation_server.recvfrom(BUFFER_SIZE)
+        operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5002))
+        result , address = operation_server.recvfrom(1024)
+        print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
+        main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+        main_server.close()
+    else:
+        if operation.decode("UTF-8") == 'multiplication':
+            operation_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            operation_server.sendto(a.encode('UTF-8'), (UDP_IP, 5003))
+            operation_server.recvfrom(BUFFER_SIZE)
+            operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5003))
+            result , address = operation_server.recvfrom(1024)
+            print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
+            main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+            main_server.close()
+        else:
+            if operation.decode("UTF-8") == 'division':
+                operation_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                operation_server.sendto(a.encode('UTF-8'), (UDP_IP, 5004))
+                operation_server.recvfrom(BUFFER_SIZE)
+                operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5004))
+                result , address = operation_server.recvfrom(1024)
+                print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
+                main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+                main_server.close()
+            else:
+                if operation.decode("UTF-8") == 'power':
+                    operation_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                    operation_server.sendto(a.encode('UTF-8'), (UDP_IP, 5005))
+                    operation_server.recvfrom(BUFFER_SIZE)
+                    operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5005))
+                    result , address = operation_server.recvfrom(1024)
+                    print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
+                    main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+                    main_server.close()
+                else: 
+                    if operation.decode("UTF-8") == 'logarithm':
+                        operation_server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                        operation_server.sendto(a.encode('UTF-8'), (UDP_IP, 5006))
+                        operation_server.recvfrom(BUFFER_SIZE)
+                        operation_server.sendto(b.encode('UTF-8'), (UDP_IP, 5006))
+                        result , address = operation_server.recvfrom(1024)
+                        print ("El resultado es:", result.decode("UTF-8"), "recibido de:", address)
+                        main_server.sendto(str(result).encode("UTF-8"),(addr[0],addr[1]))
+                        main_server.close()
 
-    a = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not a:
-        break
-    print("Operator received (a): ", a)
-    conn.send("Received".encode("UTF-8"))
-
-    b = conn.recv(BUFFER_SIZE).decode("UTF-8")
-    if not b:
-        break
-    print("Operator received (b): ", b)
-
-    operation_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    operation_server.connect(SERVERS[operation])
-    operation_server.send(a.encode('UTF-8'))
-    operation_server.recv(BUFFER_SIZE).decode('UTF-8')
-    operation_server.send(b.encode('UTF-8'))
-    result = operation_server.recv(BUFFER_SIZE).decode('UTF-8')
-    operation_server.close()
-    print("Result sent: ", result)
-    conn.send(str(result).encode("UTF-8"))
-
-    conn.close()
