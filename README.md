@@ -9,7 +9,7 @@ The example is as follows:
 
 We have 7 servers running on localhost, all of them on different ports:
 - main
-- add
+- sum
 - subtraction
 - multiplication
 - division
