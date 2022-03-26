@@ -4,9 +4,18 @@ import json
 
 
 def calculate_operation(a, b, operation):
-    operations = {'sum': a + b, 'subtraction': a - b, 'multiplication': a * b,
-                  'division': a / b, 'power': a ** b, 'logarithm': math.log(b, a)}
-    return operations[operation]
+    if operation == 'sum':
+        return a + b
+    if operation == 'subtraction':
+        return a - b
+    if operation == 'multiplication':
+        return a - b
+    if operation == 'division':
+        return a / b
+    if operation == 'power':
+        return a ** b
+    if operation == 'logarithm':
+        return math.log(b, a)
 
 
 TCP_IP = 'localhost'
