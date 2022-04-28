@@ -1,11 +1,13 @@
 import socket
 import json
+import threading
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 3000
 BUFFER_SIZE = 1024
 
 
+# Print menu
 def print_menu(menu, message):
     print(f'\n{message}:')
     print("{:<8} {:<8}".format('Option', 'Action'))
@@ -13,16 +15,15 @@ def print_menu(menu, message):
         print("{:<8} {:<8}".format('  ' + element['option'], element['action']))
 
 
+# Print groups
 def print_groups(groups):
     print("{:<15} {:<60} {:<10}".format('Name', 'Members', 'Leader'))
     for group in groups:
         print("{:<15} {:<60} {:<10}".format(group['name'], str(group['members']), str(group['leader'])))
 
 
-def start_client():
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect((TCP_IP, TCP_PORT))
-
+# Handler
+def handler(client):
     client.send(json.dumps({'message': 'Hello'}).encode('UTF-8'))
     data_received = json.loads(client.recv(BUFFER_SIZE).decode('UTF-8'))
     print_menu(data_received['data'], data_received['message'])
@@ -46,6 +47,19 @@ def start_client():
         print(data_received['message'])
 
     client.close()
+
+
+# Start client
+def start_client():
+    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client.connect((TCP_IP, TCP_PORT))
+    handler(client)
+    """
+    while 1:
+        thread1 = threading.Thread(target=handler, args=(client,))
+        thread1.start()
+        # thread1.join()
+    """
 
 
 if __name__ == '__main__':
