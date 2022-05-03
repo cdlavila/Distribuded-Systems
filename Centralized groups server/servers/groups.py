@@ -12,8 +12,7 @@ MENU = [
     {'option': '2', 'action': 'Join a group'},
     {'option': '3', 'action': 'Leave a group'},
     {'option': '4', 'action': 'Create a group'},
-    {'option': '5', 'action': 'Delete a group'},
-    {'option': '6', 'action': 'Exit'}
+    {'option': '5', 'action': 'Delete a group'}
 ]
 
 GROUPS = [
@@ -124,8 +123,8 @@ def start_groups_server():
         connection, address = groups_server.accept()
         print('\nClient address: ', address[0])
         print('Client port: ', address[1])
-        thread1 = threading.Thread(target=handler, args=(connection, address))
-        thread1.start()
+        thread = threading.Thread(name='group_thread', target=handler, args=(connection, address))
+        thread.start()
 
 
 if __name__ == '__main__':

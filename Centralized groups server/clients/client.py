@@ -54,12 +54,6 @@ def start_client():
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((TCP_IP, TCP_PORT))
     handler(client)
-    """
-    while 1:
-        thread1 = threading.Thread(target=handler, args=(client,))
-        thread1.start()
-        # thread1.join()
-    """
 
 
 if __name__ == '__main__':
