@@ -1,5 +1,5 @@
 # Distributed Systems
-This repository contains socket all concepts and problems worked in Distributed Systems Course, using the Python language.
+This repository contains all concepts and problems worked in Distributed Systems Course, using the Python language.
 
 The projects are:
 - Sockets
